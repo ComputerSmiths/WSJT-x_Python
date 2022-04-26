@@ -13,21 +13,27 @@ QSOfile = open("wsjtx.log","r")
 
 LineCount = 0
 DistanceAcc = 0
-StartYear = 2020
+StartYear = 2015
+MyGrid = "FN21xb90"
 DistanceAcc = [0]*10  # allow for 10 years
 
 for line in QSOfile:
-    LineCount += 1
-
     Values = line.split(",")
-    Year = int(Values[0][0:4])
+    try:
+        Year = int(Values[0][0:4])
+    except:
+        continue
     Grid = Values[5]
     if (Grid != ''):
-        Distance = calculate_distance("FN42kn96", Grid)
-        DistanceAcc[Year-StartYear] += Distance
+        try:
+            Distance = calculate_distance(MyGrid, Grid)
+            DistanceAcc[Year-StartYear] += Distance
+        except:
+            continue
+    LineCount += 1
 QSOfile.close()
 
-print("Found {} Lines in file".format(LineCount))
+print("Found {} valid lines in file".format(LineCount))
 
 for year in range(len(DistanceAcc)):
     if DistanceAcc[year] > 0:
